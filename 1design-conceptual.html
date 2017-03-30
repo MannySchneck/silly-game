@@ -1,0 +1,44 @@
+<html>
+<head></head>
+<body>
+<pre>
+Conceptual Model of the Game
+-----------------------------------------------------------------------------
+
+=============================================================================
+Purpose:
+
+The project implements a (silly) game. N players meet at a table and roll a
+die. Every player rolls the die once per round. They add up their scores.
+A player can skip his turn or declare that he is done. A player is
+eliminated if/when his score surpasses 21.
+
+We allow people to write players and to add them to our game. Some of the
+players may be interactive. (Ignore remote display concerns)
+
+End of game: 
+ The game is over when all players are eliminated or done. 
+
+Scoring: 
+ The winners are those players with the maximum score.
+
+
+The conceptual model: 
+
+
+ +--------+ 1                     * +--------+
+ | Server | <---------------------> | Player |
+ +--------+                         +--------+
+    |    ^1                           ^ 1
+    |    |        * +------+ *        |
+    |    +--------> | Turn | <--------+
+    |               +------+
+    |               
+    \/1
+ +--------+
+ | Die    |
+ +--------+
+
+</pre>
+</body>
+</html>

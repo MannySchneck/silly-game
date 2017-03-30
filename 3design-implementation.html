@@ -1,0 +1,209 @@
+<html>
+<head></head>
+<body>
+<pre>
+Implementation of the Game
+-----------------------------------------------------------------------------
+
+=============================================================================
+Project Overview:
+
+The Game is organized as a server-client architecture. 
+
+Each Player is organized with a model-view-controller architecture. 
+
+In principle, one could open the game so that others could register players
+that implement a different game strategy. Main would have to change so that
+people can load alternative/new classes that implement IPlayer and create
+players from these classes.  For that reason, the classes are annotated in
+this document as private or public, even though the privacy declarations
+play no role.
+
+The two architectures are interwoven. Here is a (partial) overview: 
+
+
+
+=============================================================================
+Main: 
+
+ creates players : IPlayer, 
+ connects them with controller,
+ registers them with server, 
+ starts the game, 
+ and eventually announces the winners
+
+=============================================================================
+Server/Model, View, and Controller:
+
+Model consists of Server, MPlayer, and HPlayer:
+
+ Server 
+  public interface IServer 
+  public interface ITurn
+
+  public class Server implements IServer 
+  // singleton pattern: Server.server
+
+  private class SPlayer 
+  // represents a player internally for the Server 
+
+  private class Die 
+  // represents a die 
+
+  private class Turn implements ITurn 
+  // represents a single turn of the game 
+
+ Player
+  public interface IPlayer
+
+  public abstract class Player implements IPlayer 
+  // the common pieces of Player
+
+  public class MPlayer extends Player
+  // represents a machine player 
+
+  public class HPlayer extends Player 
+  // represents a human player 
+
+Control: 
+ public class Controller 
+ // links a view and a model, no other function otherwise here
+ 
+View: the actual implementation of the view consists of three layers: 
+ - Layout implements the global frame and its components
+ - HLayout and MLayout specialize Layout for HPlayer and MPlayer, respectively
+ - HView and MView implement the semantics of the two Layout classes
+   for HPlayer and MPlayer, respectively
+ - a controller navigates between the views and the players
+   it is a variation on the MVC theme, non-standard 
+
+ -----------------------------------------------------------------------------
+
+                                    Layout 
+                                      |
+                                   ---+---
+                                  |       |
+                               HLayout   MLayout 
+                                  |       |
+                      IHView:: HView     IMView :: MView 
+                       |
+                       +--> IListener 
+
+ -----------------------------------------------------------------------------
+
+ public interface IHView
+ // the human view interface
+ public interface IListener 
+ // a human view needs a listener to implement the meaning of actions
+
+ public interface IMView
+ // the machine view interface
+
+ public abstract class Layout
+ // the general graphical layout for a player gui
+
+ abstract class HLayout extends Layout 
+ // .. specialized for Human players
+
+ abstract class MLayout extends Layout 
+  // .. specialized to machine players 
+
+ public class MView extends MLayout implements IMView
+ // the view for machine players
+
+ public class HView extends HLayout implements IHView 
+ // the view for human players
+
+=============================================================================
+Stories (use cases):
+
+1. Registering players: 
+
+Main creates and then registers players with the server. 
+
+When main has registered the players, it requests the server to play a
+round of the game. The result of play() is printed as an announcement. 
+
+2. Playing a turn: 
+
+The server plays rounds until there are no more active players. 
+
+For each round, the server grants each player a turn. The player can tell
+the turn to roll the dice or to skip, but only one of three actions is
+valid. If the player object does more with this turn, it is recorded as a
+cheater and eliminated from the tournament. 
+
+3. End of game
+
+When all players have signaled that they are done, the server informs each
+player object about the player's results. 
+
+=============================================================================
+Tests: 
+
+Each concrete class (that is more than just a record) contains some static
+examples and a `public static main' function for testing the class's
+functionality.
+
+To test a concrete class C:
+ compile the classes
+ then run java C
+
+The class Tester contains some auxiliary functions for testing, plus a main
+function that runs all tests. 
+
+To run a complete test, 
+ compile the classes
+ then run java Tester
+
+TestIDisplay : a simple implementation of IDisplay for testing purposes
+Tester: some basic test infrastructure 
+
+=============================================================================
+Classes: 
+
+A typical class consists of these pieces: 
+
+ class C extends .. implements .. {
+  - public and protected fields and a constructor 
+
+  // ------------------------------------------------------------------
+  - public and private methods 
+
+  // ------------------------------------------------------------------
+  - Examples and tests
+ } 
+
+Public methods that implement an interface method are documented in the 
+interface. All other non-trivial methods are documented above the header. 
+
+=============================================================================
+Refactoring tasks
+
+possible refactoring tasks: 
+
+ IHDisplay
+    // design improvement: could return which button was clicked
+ Layout
+    // sums should move from Layout to Player
+
+=============================================================================
+Run: 
+
+To run the program, 
+ compile all classes 
+ and run 
+
+   java Main [human-name]
+
+ from the command line. 
+
+At the moment, the game consists of one machine player and one human
+player. Each player is represented by one window. (You may need to 
+drag the windows so that you can see all windows.)
+
+You can add (human and machine) players by editing Main.java.
+
+</pre>
+</body>
+</html>
