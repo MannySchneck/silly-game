@@ -2,7 +2,8 @@
 class Turn implements ITurn {
 
     SPlayer player; 
-    Die d; 
+    Die d;
+    Server s = Server.server;
 
     Turn(SPlayer player, Die d) {
 	this.player = player; 
@@ -21,6 +22,7 @@ class Turn implements ITurn {
     }
 
     public int roll() {
+    s.reset_skips();
 	okayP(); 
 
 	int result = d.throw_die(); 
@@ -29,6 +31,7 @@ class Turn implements ITurn {
     }
 
     public void skip() {
+    s.inc_skips();
 	okayP();
     }
 
