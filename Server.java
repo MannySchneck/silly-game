@@ -28,18 +28,13 @@ class Server implements IServer {
 
         // play the game until all players are done, announce winner
         public String play() {
-
-                if(how_many <= consec_skips) {
-                        while (a_player_going() && !game_over) {
-                                for(int i = 0; i < how_many; i++) {
-                                        SPlayer p = (SPlayer)all_players.elementAt(i);
-                                        if (!p.done)
-                                                p.turn(new Turn(p,d));
-                                }
+                while (a_player_going() && !game_over) {
+                        for(int i = 0; i < how_many; i++) {
+                                SPlayer p = (SPlayer)all_players.elementAt(i);
+                                if (!p.done)
+                                        check_player_finished(p.turn(new Turn(p,d))));
                         }
                 }
-
-
                 return winner();
         }
 
@@ -66,6 +61,12 @@ class Server implements IServer {
                                 return true;
                         }
                 return false;
+        }
+
+        // checks to see if a player is done, 
+        // decrements number of players if so
+        private void check_player_finished(boolean done){
+        	if(done) current --;
         }
 
         private static String newline = "\n";
@@ -193,6 +194,20 @@ class Server implements IServer {
                 Tester.check(server.game_over, "game is over after all players skip");
         }
 
+        private static void test_done_decrement(){
+        	reset_server();
+        	createExamples();
+
+        	server.register(m1); 
+        	server.register(m2); 
+
+        	check_player_finished(true);
+
+        	test_skipped_turn(s);
+
+
+        }
+
         private static boolean test_turn(Object s) {
                 SPlayer sp = (SPlayer)s;
 
@@ -209,6 +224,7 @@ class Server implements IServer {
         private static void reset_server(){
                 server.consec_skips = 0;
                 server.how_many = 0;
+                server.current = 0;
                 server.all_players = new Vector();
         }
 
@@ -217,6 +233,7 @@ class Server implements IServer {
                 test_normal_game();
                 test_single_skip();
                 test_all_skipped_game();
+                test_done_decrement();
         }
 
 }
